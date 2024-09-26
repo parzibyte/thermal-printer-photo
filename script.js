@@ -14,48 +14,48 @@ document.addEventListener("DOMContentLoaded", async () => {
         $maximoAncho = document.querySelector("#maximoAncho"),
         $aplicarDithering = document.querySelector("#aplicarDithering");
 
-const imprimirFoto = async (nombreImpresora, fotoEnBase64, algoritmo, licencia, maximoAncho, aplicarDithering) => {
-    const payload = {
-        "serial": licencia,
-        "nombreImpresora": nombreImpresora,
-        "operaciones": [
+    const imprimirFoto = async (nombreImpresora, fotoEnBase64, algoritmo, licencia, maximoAncho, aplicarDithering) => {
+        const payload = {
+            "serial": licencia,
+            "nombreImpresora": nombreImpresora,
+            "operaciones": [
+                {
+                    "nombre": "Iniciar",
+                    "argumentos": [
+                    ]
+                },
+                {
+                    "nombre": "ImprimirImagenEnBase64",
+                    "argumentos": [
+                        fotoEnBase64,
+                        maximoAncho,
+                        algoritmo,
+                        aplicarDithering
+                    ]
+                },
+                {
+                    "nombre": "Feed",
+                    "argumentos": [
+                        2
+                    ]
+                },
+            ]
+        };
+        const httpResponse = await fetch("http://localhost:8000/imprimir",
             {
-                "nombre": "Iniciar",
-                "argumentos": [
-                ]
-            },
-            {
-                "nombre": "ImprimirImagenEnBase64",
-                "argumentos": [
-                    fotoEnBase64,
-                    maximoAncho,
-                    algoritmo,
-                    aplicarDithering
-                ]
-            },
-            {
-                "nombre": "Feed",
-                "argumentos": [
-                    2
-                ]
-            },
-        ]
-    };
-    const httpResponse = await fetch("http://localhost:8000/imprimir",
-        {
-            method: "POST",
-            body: JSON.stringify(payload),
-        });
+                method: "POST",
+                body: JSON.stringify(payload),
+            });
 
-    const jsonResponse = await httpResponse.json();
-    if (jsonResponse.ok) {
-        // Everything is ok
-        console.log("Printed successfully");
-    } else {
-        // Error message is on message property
-        console.error(jsonResponse.message)
+        const jsonResponse = await httpResponse.json();
+        if (jsonResponse.ok) {
+            // Everything is ok
+            console.log("Printed successfully");
+        } else {
+            // Error message is on message property
+            console.error(jsonResponse.message)
+        }
     }
-}
 
     const obtenerImpresoras = async () => {
         const respuesta = await fetch("http://localhost:8000/impresoras");
